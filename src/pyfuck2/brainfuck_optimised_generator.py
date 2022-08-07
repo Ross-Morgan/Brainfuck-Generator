@@ -1,11 +1,15 @@
 import os
-import logging
-from typing import Callable, TypeAlias
+from typing import Callable, Protocol, TypeAlias
 
 Hook: TypeAlias = Callable[[int, int], None]
 
 
 class ContextError(Exception): ...
+
+
+class ContextEnsurable(Protocol):
+    @property
+    def in_context(self) -> bool: ...
 
 
 class Cursor:
@@ -27,7 +31,7 @@ class Cursor:
 
 
 def ensure_context(func: Callable):
-    def wrapper(self: "OptimisedGenerator", *args, **kwargs):
+    def wrapper(self: ContextEnsurable, *args, **kwargs):
         if not self._in_context:
             raise ContextError(f"Function {func.__name__} not using in a `with` block / context manager")
         return func(*args, **kwargs)
@@ -94,7 +98,13 @@ class OptimisedGenerator:
         diff = new_pos - old_pos
         fill_char = "+" if diff > 0 else "-"
 
+
+
         print(f"Move Operation: Δ{diff}")
+
+    @ensure_context
+    def write_loop(self, n: int):
+        """"""
 
 
 OptimisedGenerator("hello.world", "output.file")
