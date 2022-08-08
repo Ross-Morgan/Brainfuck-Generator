@@ -1,10 +1,16 @@
+from dataclasses import dataclass
 import os
 from typing import Callable, Protocol, TypeAlias
+
+from factors import smallest_sum_factor_pair, smallest_sum_factors_and_remainder
+
 
 Hook: TypeAlias = Callable[[int, int], None]
 
 
-class ContextError(Exception): ...
+@dataclass
+class ContextError(Exception):
+    message: str
 
 
 class ContextEnsurable(Protocol):
@@ -87,8 +93,14 @@ class OptimisedGenerator:
 
         self._in_context = False
 
+    @property
+    def in_context(self):
+        return self._in_context
+
     def _check_context(self, f=None):
         if not self._in_context:
+            if callable(f):
+                f = f.__name__
             b = "\b"
             raise ContextError(f"Function {f or b} must be used in `with` statement")
 
@@ -98,13 +110,12 @@ class OptimisedGenerator:
         diff = new_pos - old_pos
         fill_char = "+" if diff > 0 else "-"
 
-
-
         print(f"Move Operation: Δ{diff}")
 
     @ensure_context
     def write_loop(self, n: int):
         """"""
+        factors = smallest_sum_factor_pair(n)
 
 
 OptimisedGenerator("hello.world", "output.file")

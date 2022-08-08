@@ -15,11 +15,18 @@ def closest_square(n: int) -> int:
 
 
 def smallest_sum_factor_pair(n: int) -> tuple[int, int]:
-    n = abs(n)
-    pairs = [(i, int(n / i)) for i in range(1, int(n ** 0.5)+1) if n % i == 0]
+    original = n
+
+    if (n < 0) or (n % 1):
+        raise ValueError("n must be a positive integer")
+
+    pairs = [(i, int(n / i)) for i in range(1, int(math.sqrt(n))+1) if n % i == 0]
     pair_sums = list(map(sum, pairs))
 
-    return pairs[pair_sums.index(min(pair_sums))]
+    pair = pairs[pair_sums.index(min(pair_sums))]
+    pair = int(math.copysign(pair[0], original)), pair[1]
+
+    return pair
 
 
 def smallest_sum_factors_and_remainder(n: int) -> tuple[tuple[int, int], int]:
@@ -45,6 +52,9 @@ def smallest_sum_factors_and_remainder(n: int) -> tuple[tuple[int, int], int]:
 
     n += k
 
+    factors.append(sum(smallest_sum_factor_pair(original)))
+    origins.append((original, 0))
+
     for _ in range(runs):
         if n < k:
             break
@@ -57,3 +67,6 @@ def smallest_sum_factors_and_remainder(n: int) -> tuple[tuple[int, int], int]:
     if not factors:
         return (0, 0), original
     return smallest_sum_factor_pair(origins[factors.index(min(factors))][0]), origins[factors.index(min(factors))][1]
+
+
+print(smallest_sum_factors_and_remainder(49))
