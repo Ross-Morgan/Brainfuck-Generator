@@ -30,6 +30,12 @@ def smallest_sum_factor_pair(n: int) -> tuple[int, int]:
 
 
 def smallest_sum_factors_and_remainder(n: int) -> tuple[tuple[int, int], int]:
+    """
+    Calculate 2 factors and additional number with smallest sum that result
+    in any given integer 'n'
+
+
+    """
     original = n
     n = abs(n)
 
@@ -66,6 +72,7 @@ def smallest_sum_factors_and_remainder(n: int) -> tuple[tuple[int, int], int]:
 
     if not factors:
         return (0, 0), original
+
     return smallest_sum_factor_pair(origins[factors.index(min(factors))][0]), origins[factors.index(min(factors))][1]
 
 
